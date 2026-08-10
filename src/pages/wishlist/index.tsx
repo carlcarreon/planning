@@ -1,26 +1,19 @@
+import { useState } from "react"
+
 import { Card, CardContent } from "@/components/ui/card"
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
-import { CalendarDaysIcon, ImageIcon, SearchIcon } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import type { ListItem } from "@/lib/list-items"
+import { CalendarDaysIcon, ImageIcon } from "lucide-react"
 
-const wishlistItems = [
-  { id: 1, name: "Weekend trip ideas", date: "Aug 7" },
-  { id: 2, name: "New camera lens", date: "Aug 8" },
-  { id: 3, name: "Ceramic mugs", date: "Aug 9" },
-]
+type WishlistPageProps = {
+  items: ListItem[]
+}
 
-export default function WishlistPage() {
+export default function WishlistPage({ items }: WishlistPageProps) {
+  const [checkedItems, setCheckedItems] = useState<Record<number, boolean>>({})
+
   return (
-    <section className="w-full max-w-3xl space-y-4 text-left">
-      <label className="block">
-        <span className="sr-only">Search wishlist</span>
-        <InputGroup className="h-9">
-          <InputGroupInput className="h-9" placeholder="Search..." />
-          <InputGroupAddon>
-            <SearchIcon />
-          </InputGroupAddon>
-        </InputGroup>
-      </label>
-
+    <section className="w-full space-y-4 text-left">
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
@@ -55,25 +48,60 @@ export default function WishlistPage() {
       </div>
 
       <div className="space-y-2.5 pt-1">
-        {wishlistItems.map((item) => (
+        {items.map((item) => (
           <Card
             key={item.id}
             className="border border-slate-50 bg-white shadow-sm ring-0"
           >
             <CardContent className="flex items-center gap-3 px-2.5 py-1">
-              <input
-                type="checkbox"
+              <Checkbox
                 aria-label={`Mark ${item.name} complete`}
-                className="size-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-200"
+                checked={checkedItems[item.id] ?? false}
+                onCheckedChange={(checked) => {
+                  setCheckedItems((current) => ({
+                    ...current,
+                    [item.id]: checked === true,
+                  }))
+                }}
+                className="text-blue-600 data-checked:border-blue-600 data-checked:bg-blue-600 focus-visible:ring-blue-200"
               />
 
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-slate-900">
+                <p
+                  className={`truncate text-sm font-medium text-slate-900 ${
+                    checkedItems[item.id] ? "line-through opacity-50" : ""
+                  }`}
+                >
                   {item.name}
                 </p>
               </div>
 
-              <ImageIcon className="size-4 shrink-0 text-slate-400" aria-hidden="true" />
+              {item.imageUrls?.length ? (
+                <div className="flex max-w-[8.5rem] shrink-0 items-center gap-2 overflow-hidden">
+                  {item.imageUrls.slice(0, 3).map((imageUrl, index) => (
+                    <div
+                      key={`${imageUrl.slice(0, 24)}-${index}`}
+                      className="flex size-4 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-slate-100 text-slate-400"
+                    >
+                      <img
+                        src={imageUrl}
+                        alt=""
+                        aria-hidden="true"
+                        className="size-full object-cover"
+                      />
+                    </div>
+                  ))}
+                  {item.imageUrls.length > 3 ? (
+                    <span className="text-[11px] font-medium text-slate-400">
+                      +{item.imageUrls.length - 3}
+                    </span>
+                  ) : null}
+                </div>
+              ) : (
+                <div className="flex size-4 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-slate-100 text-slate-400">
+                  <ImageIcon className="size-4" aria-hidden="true" />
+                </div>
+              )}
 
               <div className="flex shrink-0 items-center gap-1.5 text-xs font-medium tracking-[0.14em] text-slate-500">
                 <CalendarDaysIcon className="size-4" aria-hidden="true" />
@@ -82,6 +110,26 @@ export default function WishlistPage() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      <div className="space-y-0 text-center pt-0.5">
+        <div className="relative mx-auto w-full max-w-[18rem] overflow-hidden">
+          <img
+            src="/wishlistItemFooterIcon.png"
+            alt=""
+            aria-hidden="true"
+            className="block h-auto w-full"
+          />
+        </div>
+
+        <div className="space-y-0 text-center -mt-14 sm:-mt-16">
+          <p className="text-lg font-semibold tracking-tight leading-none text-slate-900 sm:text-xl">
+            Little dreams today,
+          </p>
+          <p className="text-sm text-slate-500 sm:text-base">
+            big memories tomorrow. 💜
+          </p>
+        </div>
       </div>
     </section>
   )

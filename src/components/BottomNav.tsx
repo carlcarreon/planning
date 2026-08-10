@@ -1,6 +1,5 @@
 import { Heart, Image, ListTodo, UserRound } from 'lucide-react'
-
-type PageKey = 'todo' | 'wishlist' | 'memories' | 'profile'
+import type { PageKey } from '../lib/navigation'
 
 type BottomNavProps = {
   activePage: PageKey
@@ -12,7 +11,7 @@ const items: Array<{
   label: string
   Icon: typeof ListTodo
 }> = [
-  { key: 'todo', label: 'Checklist', Icon: ListTodo },
+  { key: 'checklist', label: 'Checklist', Icon: ListTodo },
   { key: 'wishlist', label: 'Wishlist', Icon: Heart },
   { key: 'memories', label: 'Memories', Icon: Image },
   { key: 'profile', label: 'Profile', Icon: UserRound },

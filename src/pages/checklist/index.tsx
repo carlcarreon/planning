@@ -1,26 +1,19 @@
+import { useState } from "react"
+
 import { Card, CardContent } from "@/components/ui/card"
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
-import { CalendarDaysIcon, ImageIcon, SearchIcon } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import type { ListItem } from "@/lib/list-items"
+import { CalendarDaysIcon, ImageIcon } from "lucide-react"
 
-const checklistItems = [
-  { id: 1, name: "Morning market run", date: "Aug 7" },
-  { id: 2, name: "Cafe shortlist", date: "Aug 8" },
-  { id: 3, name: "Weekend groceries", date: "Aug 9" },
-]
+type ChecklistPageProps = {
+  items: ListItem[]
+}
 
-export default function ChecklistPage() {
+export default function ChecklistPage({ items }: ChecklistPageProps) {
+  const [checkedItems, setCheckedItems] = useState<Record<number, boolean>>({})
+
   return (
-    <section className="w-full max-w-3xl space-y-4 text-left">
-      <label className="block">
-        <span className="sr-only">Search tasks</span>
-        <InputGroup className="h-9">
-          <InputGroupInput className="h-9" placeholder="Search..." />
-          <InputGroupAddon>
-            <SearchIcon />
-          </InputGroupAddon>
-        </InputGroup>
-      </label>
-
+    <section className="w-full space-y-4 text-left">
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
@@ -55,20 +48,32 @@ export default function ChecklistPage() {
       </div>
 
       <div className="space-y-2.5 pt-1">
-        {checklistItems.map((item) => (
+        {items.map((item) => (
           <Card
             key={item.id}
             className="border border-slate-50 bg-white shadow-sm ring-0"
           >
             <CardContent className="flex items-center gap-3 px-2.5 py-1">
-              <input
-                type="checkbox"
+              <Checkbox
                 aria-label={`Mark ${item.name} complete`}
-                className="size-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-200"
+                checked={checkedItems[item.id] ?? false}
+                onCheckedChange={(checked) => {
+                  setCheckedItems((current) => ({
+                    ...current,
+                    [item.id]: checked === true,
+                  }))
+                }}
+                className="text-blue-600 data-checked:border-blue-600 data-checked:bg-blue-600 focus-visible:ring-blue-200"
               />
 
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-slate-900">{item.name}</p>
+                <p
+                  className={`truncate text-sm font-medium text-slate-900 ${
+                    checkedItems[item.id] ? "line-through opacity-50" : ""
+                  }`}
+                >
+                  {item.name}
+                </p>
               </div>
 
               <ImageIcon className="size-4 shrink-0 text-slate-400" aria-hidden="true" />
@@ -80,6 +85,26 @@ export default function ChecklistPage() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      <div className="space-y-0 text-center pt-0.5">
+        <div className="relative mx-auto w-full max-w-[18rem] overflow-hidden">
+          <img
+            src="/checklistItemFooterIcon.png"
+            alt=""
+            aria-hidden="true"
+            className="block h-auto w-full"
+          />
+        </div>
+
+        <div className="space-y-0 text-center -mt-14 sm:-mt-16">
+          <p className="text-lg font-semibold tracking-tight leading-none text-slate-900 sm:text-xl">
+            One plan at a time,
+          </p>
+          <p className="text-sm text-slate-500 sm:text-base">
+            so many memories to make. 💕
+          </p>
+        </div>
       </div>
     </section>
   )

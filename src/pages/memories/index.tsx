@@ -3,7 +3,7 @@ import { ImageOff, ImageIcon, CalendarDaysIcon } from "lucide-react"
 
 export default function MemoriesPage() {
   return (
-    <section className="w-full max-w-3xl space-y-4 text-left">
+    <section className="w-full space-y-4 text-left">
       <Card className="border border-slate-50 bg-white py-1 shadow-sm ring-0">
         <CardContent className="flex min-h-28 p-1">
           <div className="w-[30%] shrink-0 bg-slate-100">
@@ -31,6 +31,26 @@ export default function MemoriesPage() {
           </div>
         </CardContent>
       </Card>
+
+      <div className="space-y-0 text-center pt-0.5">
+        <div className="relative mx-auto w-full max-w-[18rem] overflow-hidden">
+          <img
+            src="/memoriesItemFooterIcon.png"
+            alt=""
+            aria-hidden="true"
+            className="block h-auto w-full"
+          />
+        </div>
+
+        <div className="space-y-0 text-center -mt-14 sm:-mt-16">
+          <p className="text-lg font-semibold tracking-tight leading-none text-slate-900 sm:text-xl">
+            The best moments,
+          </p>
+          <p className="text-sm text-slate-500 sm:text-base">
+            we&apos;ll keep forever. 💗
+          </p>
+        </div>
+      </div>
     </section>
   )
 }
