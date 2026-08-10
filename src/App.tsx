@@ -41,6 +41,7 @@ function App() {
   const [session, setSession] = useState<Session | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAuthReady, setIsAuthReady] = useState(false)
+  const [isSigningOut, setIsSigningOut] = useState(false)
   const nextItemIdRef = useRef(4)
 
   const syncRouteState = useCallback((pathname: string, authenticated: boolean) => {
@@ -181,14 +182,15 @@ function App() {
   }, [activePage])
 
   const handleAddItem = useCallback(
-    (item: { name: string; imageUrls?: string[] }) => {
+    (item: { name: string; imageUrls?: string[]; dueDate?: Date; tags?: ListItem['tags'] }) => {
       const nextItem: ListItem = {
         id: nextItemIdRef.current,
         name: item.name,
         date: new Intl.DateTimeFormat('en-US', {
           month: 'short',
           day: 'numeric',
-        }).format(new Date()),
+        }).format(item.dueDate ?? new Date()),
+        tags: item.tags,
         imageUrls: item.imageUrls,
       }
 
@@ -208,7 +210,24 @@ function App() {
   )
 
   const handleSignOut = useCallback(async () => {
-    await supabase.auth.signOut()
+    setIsSigningOut(true)
+
+    const { error } = await supabase.auth.signOut()
+
+    if (error) {
+      setIsSigningOut(false)
+      return
+    }
+
+    setSession(null)
+    setIsAuthenticated(false)
+    setActiveAuthPage('login')
+    setActivePage('checklist')
+    setIsSigningOut(false)
+
+    if (window.location.pathname !== '/login') {
+      window.history.replaceState({}, '', '/login')
+    }
   }, [])
 
   const currentUser = session?.user
@@ -263,6 +282,7 @@ function App() {
         onSelectPage={handleSelectPage}
         onAddItem={addItemPage ? handleOpenAddItem : undefined}
         onSignOut={handleSignOut}
+        isSigningOut={isSigningOut}
         currentUser={currentUser}
         showHeader={activePage !== 'profile'}
       >

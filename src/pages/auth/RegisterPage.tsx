@@ -60,6 +60,7 @@ export default function RegisterPage({ onLogin }: RegisterPageProps) {
         id: data.user?.id,
         username: username.trim().toLowerCase(),
         email: email.trim().toLowerCase(),
+        full_name: username.trim(),
       })
       window.history.pushState({}, '', '/checklist')
       window.dispatchEvent(new PopStateEvent('popstate'))

@@ -11,17 +11,15 @@ export async function resolveLoginEmail(identifier: string) {
     return normalizedIdentifier
   }
 
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('email')
-    .eq('username', normalizedIdentifier)
-    .maybeSingle()
+  const { data, error } = await supabase.rpc('find_email_by_username', {
+    lookup_username: normalizedIdentifier,
+  })
 
   if (error) {
     throw new Error(error.message)
   }
 
-  const email = data?.email?.trim()
+  const email = typeof data === 'string' ? data.trim().toLowerCase() : ''
 
   if (!email) {
     throw new Error('No account found for that username.')

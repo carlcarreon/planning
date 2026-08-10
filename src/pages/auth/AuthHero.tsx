@@ -22,7 +22,7 @@ export default function AuthHero({
 
       <div className="space-y-0 text-center -mt-35">
         <p className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
-          Together <span className="text-rose-400">♡</span>
+          TwoDo
         </p>
         <p className="text-sm text-slate-500 sm:text-base">{caption}</p>
       </div>

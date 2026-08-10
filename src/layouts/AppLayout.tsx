@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import {
   BadgeCheckIcon,
   BellIcon,
-  CreditCardIcon,
   LogOutIcon,
   SearchIcon,
   XIcon,
@@ -36,6 +35,7 @@ type AppLayoutProps = {
   onSelectPage: (page: PageKey) => void
   onAddItem?: () => void
   onSignOut: () => void | Promise<void>
+  isSigningOut?: boolean
   currentUser: CurrentUser | null
   showHeader?: boolean
 }
@@ -44,7 +44,8 @@ function HeaderAvatarMenu({
   currentUser,
   onSelectPage,
   onSignOut,
-}: Pick<AppLayoutProps, 'currentUser' | 'onSelectPage' | 'onSignOut'>) {
+  isSigningOut = false,
+}: Pick<AppLayoutProps, 'currentUser' | 'onSelectPage' | 'onSignOut' | 'isSigningOut'>) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -62,43 +63,64 @@ function HeaderAvatarMenu({
         }
       />
       <DropdownMenuContent align="end" className="w-56">
+        <div className="flex items-center gap-3 border-b border-slate-100 px-3 py-3">
+          <Avatar size="default" className="size-10 border-0 shadow-none after:border-0">
+            {currentUser?.avatarUrl ? (
+              <AvatarImage src={currentUser.avatarUrl} alt={currentUser.name} />
+            ) : null}
+            <AvatarFallback className="bg-rose-50 text-rose-500">
+              <UserRound className="size-4" aria-hidden="true" />
+            </AvatarFallback>
+          </Avatar>
+
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-slate-900">
+              {currentUser?.name ?? 'User'}
+            </p>
+            <p className="truncate text-xs text-slate-500">
+              {currentUser?.email ?? 'No email'}
+            </p>
+          </div>
+        </div>
+
         <DropdownMenuGroup>
           <DropdownMenuItem
-            onSelect={() => {
+            onClick={() => {
               onSelectPage('profile')
             }}
           >
             <BadgeCheckIcon />
             Account
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onSelect={() => {
-              onSelectPage('profile')
-            }}
-          >
-            <CreditCardIcon />
-            Billing
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onSelect={() => {
-              onSelectPage('profile')
-            }}
-          >
-            <BellIcon />
-            Notifications
-          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onSelect={() => {
+          closeOnClick={false}
+          disabled={isSigningOut}
+          onClick={() => {
             void onSignOut()
           }}
         >
           <LogOutIcon />
-          Sign Out
+          {isSigningOut ? 'Signing out...' : 'Sign Out'}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  )
+}
+
+function HeaderNotificationButton() {
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      aria-label="Notifications"
+      className="size-10 rounded-full bg-white text-slate-700 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50"
+      title="Notifications"
+    >
+      <BellIcon className="size-4" aria-hidden="true" />
+    </Button>
   )
 }
 
@@ -198,6 +220,7 @@ export default function AppLayout({
   onSelectPage,
   onAddItem,
   onSignOut,
+  isSigningOut,
   currentUser,
   showHeader = true,
 }: AppLayoutProps) {
@@ -209,11 +232,15 @@ export default function AppLayout({
             <HeaderSearch />
             {onAddItem ? <HeaderAddButton onClick={onAddItem} /> : null}
           </div>
-          <HeaderAvatarMenu
-            currentUser={currentUser}
-            onSelectPage={onSelectPage}
-            onSignOut={onSignOut}
-          />
+          <div className="flex items-center gap-2">
+            <HeaderNotificationButton />
+            <HeaderAvatarMenu
+              currentUser={currentUser}
+              onSelectPage={onSelectPage}
+              onSignOut={onSignOut}
+              isSigningOut={isSigningOut}
+            />
+          </div>
         </header>
       ) : null}
       <main className="app-shell__content flex-1 min-h-0 overflow-hidden">

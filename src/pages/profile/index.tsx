@@ -12,7 +12,6 @@ import {
   StarIcon,
   UserRound,
   UsersRound,
-  Bell,
   Heart,
 } from "lucide-react"
 
@@ -25,7 +24,6 @@ const profileStats = [
 const profileMenuItems = [
   { id: "edit-profile", label: "Edit Profile", Icon: UserRound, tone: "text-rose-500" },
   { id: "account", label: "Account & Preferences", Icon: UsersRound, tone: "text-rose-500" },
-  { id: "notifications", label: "Notifications", Icon: Bell, tone: "text-rose-500" },
   { id: "privacy", label: "Privacy", Icon: LockKeyhole, tone: "text-rose-500" },
   { id: "appearance", label: "Appearance", Icon: Palette, value: "Light", tone: "text-rose-500" },
   { id: "language", label: "Language", Icon: Globe, value: "English", tone: "text-rose-500" },

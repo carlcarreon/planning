@@ -11,28 +11,6 @@ import { resolveLoginEmail } from '../../lib/auth'
 import { supabase } from '../../lib/supabase'
 import AuthHero from './AuthHero'
 
-function GoogleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="size-6">
-      <path fill="#4285F4" d="M21.6 12.27c0-.68-.06-1.36-.18-2.01H12v3.81h5.38a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 2.98-4.33 2.98-7.32Z" />
-      <path fill="#34A853" d="M12 22c2.7 0 4.97-.89 6.63-2.41l-3.24-2.5c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.75-5.58-4.1H2.55v2.57A10 10 0 0 0 12 22Z" />
-      <path fill="#FBBC05" d="M6.42 13.95A5.98 5.98 0 0 1 6.1 12c0-.68.12-1.34.32-1.95V7.48H2.55A10 10 0 0 0 2 12c0 1.61.39 3.13 1.08 4.47l3.34-2.52Z" />
-      <path fill="#EA4335" d="M12 5.96c1.47 0 2.79.51 3.83 1.51l2.87-2.87A9.7 9.7 0 0 0 12 2C8.61 2 5.67 3.95 4.08 6.48l3.34 2.57C7.2 6.83 9.4 5.96 12 5.96Z" />
-    </svg>
-  )
-}
-
-function AppleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="size-6">
-      <path
-        fill="currentColor"
-        d="M16.37 13.15c0-2.33 1.94-3.44 2.03-3.5-1.1-1.6-2.8-1.83-3.4-1.85-1.45-.15-2.84.85-3.57.85-.74 0-1.89-.83-3.1-.81-1.58.02-3.04.92-3.85 2.35-1.65 2.86-.42 7.09 1.18 9.42.79 1.14 1.71 2.42 2.92 2.37 1.16-.05 1.6-.74 3.01-.74 1.4 0 1.8.74 3.02.71 1.24-.02 2.02-1.15 2.79-2.3.9-1.33 1.28-2.62 1.3-2.68-.03-.01-2.5-.96-2.53-3.82Zm-2.39-6.95c.67-.81 1.12-1.93.99-3.05-.96.04-2.13.66-2.81 1.46-.6.69-1.14 1.83-.99 2.93 1.07.08 2.17-.56 2.81-1.34Z"
-      />
-    </svg>
-  )
-}
-
 type LoginPageProps = {
   onSignUp: () => void
 }
@@ -167,24 +145,6 @@ export default function LoginPage({ onSignUp }: LoginPageProps) {
               {errorMessage}
             </p>
           ) : null}
-
-          <div className="flex items-center gap-4 py-1">
-            <div className="h-px flex-1 bg-slate-200" />
-            <span className="text-sm text-slate-500">or continue with</span>
-            <div className="h-px flex-1 bg-slate-200" />
-          </div>
-
-          <div className="flex gap-3">
-            <Button type="button" variant="outline" className="h-auto flex-1 py-3">
-              <GoogleIcon />
-              Google
-            </Button>
-
-            <Button type="button" variant="outline" className="h-auto flex-1 py-3">
-              <AppleIcon />
-              Apple
-            </Button>
-          </div>
 
           <p className="pt-2 text-center text-sm text-slate-500">
             Don&apos;t have an account?{' '}

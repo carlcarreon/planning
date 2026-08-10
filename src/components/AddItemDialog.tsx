@@ -1,7 +1,8 @@
 import { useEffect, useId, useState, type ChangeEvent, type FormEvent } from 'react'
-import { ImagePlus, Plus, X } from 'lucide-react'
+import { ChevronDownIcon, ImagePlus, Plus, X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
 import {
   Dialog,
   DialogClose,
@@ -10,14 +11,27 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import type { ChecklistTag } from '@/lib/list-items'
 
 type PageType = 'checklist' | 'wishlist'
+
+const checklistTags: ChecklistTag[] = ['Place', 'Food', 'Item', 'Other']
 
 type AddItemDialogProps = {
   open: boolean
   page: PageType
   onOpenChange: (open: boolean) => void
-  onSubmit: (item: { name: string; imageUrls?: string[] }) => void
+  onSubmit: (item: {
+    name: string
+    imageUrls?: string[]
+    dueDate?: Date
+    tags?: ChecklistTag[]
+  }) => void
 }
 
 export default function AddItemDialog({
@@ -29,7 +43,16 @@ export default function AddItemDialog({
   const [name, setName] = useState('')
   const [imageUrls, setImageUrls] = useState<string[]>([])
   const [imageError, setImageError] = useState<string | null>(null)
+  const [dueDate, setDueDate] = useState<Date | undefined>(undefined)
+  const [tags, setTags] = useState<ChecklistTag[]>(['Place'])
   const imageInputId = useId()
+  const dueDateLabel = dueDate
+    ? new Intl.DateTimeFormat('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      }).format(dueDate)
+    : 'Pick a due date'
 
   useEffect(() => {
     if (!open) {
@@ -39,6 +62,8 @@ export default function AddItemDialog({
     setName('')
     setImageUrls([])
     setImageError(null)
+    setDueDate(undefined)
+    setTags(['Place'])
   }, [open, page])
 
   const title = page === 'checklist' ? 'Add checklist item' : 'Add wishlist item'
@@ -59,6 +84,8 @@ export default function AddItemDialog({
     onSubmit({
       name: trimmedName,
       imageUrls: page === 'wishlist' ? imageUrls : undefined,
+      dueDate: page === 'checklist' ? dueDate : undefined,
+      tags: page === 'checklist' ? tags : undefined,
     })
 
     onOpenChange(false)
@@ -145,6 +172,65 @@ export default function AddItemDialog({
               required
             />
           </label>
+
+          {page === 'checklist' ? (
+            <div className="block space-y-2 text-left">
+              <span className="text-sm font-semibold text-slate-900">Due date</span>
+              <Popover>
+                <PopoverTrigger
+                  render={
+                    <Button
+                      variant="outline"
+                      data-empty={!dueDate}
+                      className="h-11 w-full justify-between rounded-sm border-slate-200 bg-white px-3 text-left font-normal text-slate-900 data-[empty=true]:text-slate-400"
+                    >
+                      {dueDate ? dueDateLabel : <span>Pick a due date</span>}
+                      <ChevronDownIcon data-icon="inline-end" />
+                    </Button>
+                  }
+                />
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={dueDate}
+                    onSelect={setDueDate}
+                    defaultMonth={dueDate}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          ) : null}
+
+          {page === 'checklist' ? (
+            <div className="block space-y-2 text-left">
+              <span className="text-sm font-semibold text-slate-900">Tag</span>
+              <div className="flex flex-wrap gap-2">
+                {checklistTags.map((nextTag) => {
+                  const isSelected = tags.includes(nextTag)
+
+                  return (
+                    <Button
+                      key={nextTag}
+                      type="button"
+                      variant={isSelected ? 'default' : 'outline'}
+                      size="sm"
+                      aria-pressed={isSelected}
+                      className="h-9 rounded-full px-3.5 text-xs font-semibold"
+                      onClick={() => {
+                        setTags((current) =>
+                          current.includes(nextTag)
+                            ? current.filter((tag) => tag !== nextTag)
+                            : [...current, nextTag],
+                        )
+                      }}
+                    >
+                      {nextTag}
+                    </Button>
+                  )
+                })}
+              </div>
+            </div>
+          ) : null}
 
           {page === 'wishlist' ? (
             <label className="block space-y-2 text-left">
