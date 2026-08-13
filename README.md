@@ -1,4 +1,4 @@
-# Planning
+# Planning.
 
 # React + TypeScript + Vite
 
